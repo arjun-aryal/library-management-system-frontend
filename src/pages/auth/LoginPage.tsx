@@ -5,16 +5,16 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../components/ui/card";
-import { Link, Navigate, useNavigate } from "react-router-dom";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
+} from "../../components/ui/card";
+import { Link, useNavigate } from "react-router-dom";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
 import { useForm } from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
-import { Button } from "../components/ui/button";
-import { loginValidation } from "../lib/validation";
-import { loginUser } from "../services/auth.service";
-import { useAuth } from "../context/AuthContext";
+import { Button } from "../../components/ui/button";
+import { loginValidation } from "../../lib/validation";
+import { loginUser } from "../../services/auth.service";
+import { useAuth } from "../../context/AuthContext";
 
 interface LoginFormData {
   email: string;
@@ -42,10 +42,7 @@ function Login() {
       const { user, token } = response.data;
 
       login(user, token);
-      navigate("/register"); // need to replace for dashboard
-    //   setTimeout(() => {
-    //   navigate("/register");
-    // }, 500);
+      navigate("/dashboard"); // need to replace for dashboard
     } catch (error) {
       setError(error instanceof Error ? error.message : "Registration failed");
     }

@@ -5,16 +5,16 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../components/ui/card";
+} from "../../components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
 import { useForm } from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
-import { Button } from "../components/ui/button";
-import { registerValidation } from "../lib/validation";
-import { useAuth } from "../context/AuthContext";
-import { registerUser } from "../services/auth.service";
+import { Button } from "../../components/ui/button";
+import { registerValidation } from "../../lib/validation";
+import { useAuth } from "../../context/AuthContext";
+import { registerUser } from "../../services/auth.service";
 
 interface RegisterFormData {
   name: string;
@@ -34,10 +34,7 @@ export function Register() {
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormData>();
   const navigate = useNavigate();
-  // const { isAuthenticated } = useAuth();
-  // if (isAuthenticated) {
-  //   return <Navigate to="/dashboard" replace />;
-  // }
+
   const password = watch("password", "");
   const onSubmit = async (data: RegisterFormData) => {
     try {
