@@ -62,3 +62,26 @@ export const userValidation = {
     required: "Email is required",
   },
 };
+
+export const authorValidation = {
+  name: {
+    required: "Name is required",
+    minLength: {
+      value: 2,
+      message: "Name must be at least 2 characters",
+    },
+  },
+  nationality: {
+    required: "Nationality is required",
+    minLength: {
+      value: 2,
+      message: "Nationality must be at least 2 characters",
+    },
+  },
+  bio: {
+    maxLength: {
+      value: 1000,
+      message: "Bio cannot exceed 1000 characters",
+    },
+  },
+};

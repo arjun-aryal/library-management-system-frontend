@@ -32,13 +32,10 @@ export function DataPagination({
   onPageChange,
   onPageSizeChange,
 }: PaginationProps) {
-
   return (
     <div className="flex items-center justify-between gap-4 mt-4">
       <div className="flex items-center gap-2">
-        <Label className="text-sm text-muted-foreground">
-          Rows per page
-        </Label>
+        <Label className="text-sm text-muted-foreground">Rows per page</Label>
 
         <Select
           value={String(pageSize)}
@@ -66,7 +63,10 @@ export function DataPagination({
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious
-              onClick={() => onPageChange(page - 1)}
+              size="sm"
+              onClick={() => {
+                if (page > 1) onPageChange(page - 1);
+              }}
             />
           </PaginationItem>
 
@@ -78,7 +78,10 @@ export function DataPagination({
 
           <PaginationItem>
             <PaginationNext
-              onClick={() => onPageChange(page + 1)}
+              size="sm"
+              onClick={() => {
+                if (page < totalPages) onPageChange(page + 1);
+              }}
             />
           </PaginationItem>
         </PaginationContent>

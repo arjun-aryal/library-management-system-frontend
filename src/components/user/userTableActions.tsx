@@ -11,16 +11,10 @@ export function UserTableActions({ onEdit, onDelete }: TableActionsProps) {
     <div className="flex items-center gap-2">
       <Button variant="outline" size="sm" onClick={onEdit}>
         <Pencil className="h-4 w-4" />
+
         Edit
       </Button>
-      <Button
-        variant="destructive"
-        size="sm"
-        onClick={() => {
-          console.log("delete");
-          onDelete();
-        }}
-      >
+      <Button variant="destructive" size="sm" onClick={onDelete}>
         <Trash2 className="h-4 w-4" />
         Delete
       </Button>

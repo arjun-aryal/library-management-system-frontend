@@ -9,6 +9,7 @@ interface SortableTableHeadProps {
   sortBy: string;
   sortOrder: SortOrder;
   onSort: (column: string) => void;
+  className?: string;
 }
 
 export function SortableTableHead({
@@ -17,6 +18,7 @@ export function SortableTableHead({
   sortBy,
   sortOrder,
   onSort,
+  className,
 }: SortableTableHeadProps) {
   const isActive = sortBy === column;
   const Icon = isActive
@@ -26,7 +28,7 @@ export function SortableTableHead({
     : ArrowUpDown;
 
   return (
-    <TableHead>
+    <TableHead className={className}>
       <button
         type="button"
         onClick={() => onSort(column)}

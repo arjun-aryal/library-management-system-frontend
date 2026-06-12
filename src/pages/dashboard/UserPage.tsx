@@ -15,10 +15,7 @@ import type {
   PaginatedResponse,
   SortOrder,
 } from "../../types/common";
-import type {
-  BaseUser,
-  User,
-} from "../../types/user.type";
+import type { BaseUser, User } from "../../types/user.type";
 import useDebounce from "../../lib/useDebounce";
 import { userService } from "../../services/user.service";
 import { EmptyState } from "../../components/common/EmptyRecord";
@@ -115,7 +112,7 @@ export function UsersPage() {
       await fetchData();
     } catch (error) {
       console.error("Failed to save user:", error);
-      // toast needed 
+      // toast needed
     }
   };
   const handleDelete = async () => {
@@ -135,20 +132,22 @@ export function UsersPage() {
   };
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-row items-center   gap-4 justify-between">
         <CardTitle>Users</CardTitle>
-        <Button
-          onClick={() => {
-            setSelectedUser(null);
-            setFormOpen(true);
-          }}
-        >
-          <Plus className="h-4 w-4" />
-          Add User
-        </Button>
+        <div className="flex items-center gap-2 ml-auto">
+          <Button
+            onClick={() => {
+              setSelectedUser(null);
+              setFormOpen(true);
+            }}
+          >
+            <Plus className="h-4 w-4" />
+            Add User
+          </Button>
+        </div>
       </CardHeader>
 
-      <CardContent>
+      <CardContent className="space-y-4 ">
         <div className="relative max-w-sm">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -183,56 +182,60 @@ export function UsersPage() {
               />
             ) : (
               <>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <SortableTableHead
-                        label="Name"
-                        column="name"
-                        sortBy={sortBy}
-                        sortOrder={order}
-                        onSort={handleSort}
-                      />
-                      <SortableTableHead
-                        label="Email"
-                        column="email"
-                        sortBy={sortBy}
-                        sortOrder={order}
-                        onSort={handleSort}
-                      />
-                      <TableHead>Role</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-
-                  <TableBody>
-                    {data.data.map((user) => (
-                      <TableRow key={user.id}>
-                        <TableCell>{user.name}</TableCell>
-                        <TableCell>{user.email}</TableCell>
-                        <TableCell>
-                          <Badge variant="secondary">
-                            {formatRole(user.role)}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <UserTableActions
-                            onEdit={() => {
-                              // do edit
-                              setSelectedUser(user);
-                              setFormOpen(true);
-                            }}
-                            onDelete={() => {
-                              // do delete
-                              setSelectedUser(user);
-                              setDeleteOpen(true);
-                            }}
-                          />
-                        </TableCell>
+                <div className="px-10">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <SortableTableHead
+                          label="Name"
+                          column="name"
+                          sortBy={sortBy}
+                          sortOrder={order}
+                          onSort={handleSort}
+                          className="w-auto"
+                        />
+                        <SortableTableHead
+                          label="Email"
+                          column="email"
+                          sortBy={sortBy}
+                          sortOrder={order}
+                          onSort={handleSort}
+                          className="w-auto"
+                        />
+                        <TableHead>Role</TableHead>
+                        <TableHead>Actions</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+
+                    <TableBody>
+                      {data.data.map((user) => (
+                        <TableRow key={user.id}>
+                          <TableCell>{user.name}</TableCell>
+                          <TableCell>{user.email}</TableCell>
+                          <TableCell>
+                            <Badge variant="secondary">
+                              {formatRole(user.role)}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="w-[100px]">
+                            <UserTableActions
+                              onEdit={() => {
+                                // do edit
+                                setSelectedUser(user);
+                                setFormOpen(true);
+                              }}
+                              onDelete={() => {
+                                // do delete
+                                setSelectedUser(user);
+                                setDeleteOpen(true);
+                              }}
+                            />
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
 
                 <DataPagination
                   // page={data.pagination.page}
