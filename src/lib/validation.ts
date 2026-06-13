@@ -85,3 +85,22 @@ export const authorValidation = {
     },
   },
 };
+
+const currentYear = new Date().getFullYear();
+
+export const bookValidation = {
+  title: { required: "Title is required" },
+  isbn: { required: "ISBN is required" },
+  published_year: {
+    required: "Published year is required",
+    valueAsNumber: true,
+    min: {
+      value: 1900,
+      message: "Year must be 1900 or later",
+    },
+    max: {
+      value: currentYear,
+      message: `Year cannot exceed ${currentYear}`,
+    },
+  },
+};

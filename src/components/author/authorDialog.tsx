@@ -13,7 +13,7 @@ import { Label } from "../ui/label";
 import { authorValidation } from "../../lib/validation";
 
 import { Button } from "../ui/button";
-import type { Author, BaseAuthor } from "../../types/author.types";
+import type { Author, CreateAuthorPayload } from "../../types/author.types";
 import { Textarea } from "../ui/textarea";
 import { getNames } from "country-list";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
@@ -31,7 +31,7 @@ interface AuthorFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   author?: Author | null;
-  onSubmit: (values: BaseAuthor) => Promise<void>;
+  onSubmit: (values: CreateAuthorPayload) => Promise<void>;
 }
 
 export function AuthorFormDialog({
@@ -49,10 +49,11 @@ export function AuthorFormDialog({
     setValue,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<BaseAuthor>({
+  } = useForm<CreateAuthorPayload>({
     defaultValues: {
       name: "",
       nationality: "",
+      email: "",
       bio: "",
     },
   });
@@ -64,12 +65,13 @@ export function AuthorFormDialog({
       reset({
         name: author?.name ?? "",
         nationality: author?.nationality ?? "",
+        email: "",
         bio: author?.bio ?? "",
       });
     }
   }, [open, author, reset]);
 
-  const submitHandler = async (values: BaseAuthor) => {
+  const submitHandler = async (values: CreateAuthorPayload) => {
     await onSubmit(values);
     onOpenChange(false);
   };
@@ -92,6 +94,30 @@ export function AuthorFormDialog({
               <p className="text-sm text-destructive">{errors.name.message}</p>
             )}
           </div>
+          {!isEdit && (
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+
+              <Input
+                id="email"
+                type="email"
+                placeholder="Enter email"
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Invalid email address",
+                  },
+                })}
+              />
+
+              {errors.email && (
+                <p className="text-sm text-destructive">
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="nationality">Nationality</Label>

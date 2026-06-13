@@ -6,7 +6,7 @@ interface TableActionsProps {
   onDelete: () => void;
 }
 
-export function UserTableActions({ onEdit, onDelete }: TableActionsProps) {
+export function TableActions({ onEdit, onDelete }: TableActionsProps) {
   return (
     <div className="flex items-center gap-2">
       <Button variant="outline" size="sm" onClick={onEdit}>

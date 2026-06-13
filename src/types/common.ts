@@ -5,7 +5,7 @@ export interface ListQueryParams {
   limit: number;
   search?: string;
   sortBy?: string;
-  sortOrder?: SortOrder;
+  order?: SortOrder;
 }
 
 export interface PaginatedResponse<T> {

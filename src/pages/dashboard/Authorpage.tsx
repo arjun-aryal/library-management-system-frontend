@@ -6,7 +6,11 @@ import {
   CardTitle,
 } from "../../components/ui/card";
 import { BookOpen, Download, Plus, Search, Upload } from "lucide-react";
-import type { Author } from "../../types/author.types";
+import type {
+  Author,
+  CreateAuthorPayload,
+  UpdateAuthorPayload,
+} from "../../types/author.types";
 import { useAuth } from "../../context/AuthContext";
 import { Input } from "../../components/ui/input";
 import useDebounce from "../../lib/useDebounce";
@@ -15,8 +19,6 @@ import type {
   PaginatedResponse,
   SortOrder,
 } from "../../types/common";
-import { userService } from "../../services/user.service";
-import type { User } from "../../types/user.type";
 import { LoadingState } from "../../components/common/Loader";
 import { ErrorState } from "../../components/common/Error";
 import { DataPagination } from "../../components/common/Pagination";
@@ -30,12 +32,13 @@ import {
 } from "../../components/ui/table";
 import { EmptyState } from "../../components/common/EmptyRecord";
 import { SortableTableHead } from "../../components/common/SortableTableHead";
-import { formatRole } from "../../lib/roleutils";
-import { UserTableActions } from "../../components/user/userTableActions";
+import { TableActions } from "../../components/common/TableActions";
 import { Link } from "react-router-dom";
 import { Button } from "../../components/ui/button";
 import { ConfirmDialog } from "../../components/common/ConfirmDialog";
 import { AuthorFormDialog } from "../../components/author/authorDialog";
+import { authorService } from "../../services/author.service";
+import { isReadOnly } from "../../lib/permission";
 
 export function AuthorsPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -44,12 +47,13 @@ export function AuthorsPage() {
   const [selectedAuthor, setSelectedAuthor] = useState<Author | null>(null);
   const [formOpen, setFormOpen] = useState(false);
   const { user } = useAuth();
-  const isReadOnly = user?.role === "super_admin";
+  const readOnly = isReadOnly(user);
+
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
 
   const [page, setPage] = useState(1);
-  const [data, setData] = useState<PaginatedResponse<User> | null>(null);
+  const [data, setData] = useState<PaginatedResponse<Author> | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState("name");
@@ -59,16 +63,36 @@ export function AuthorsPage() {
   const [deleting, setDeleting] = useState(false);
 
   const handleImport = async (file: File) => {
-    console.log(file);
+    setImporting(true);
+
+    try {
+      await authorService.importCsv(file);
+      await fetchData();
+    } finally {
+      setImporting(false);
+    }
   };
-  const handleExport = async () => {};
+
+  const handleExport = async () => {
+    const csv = await authorService.exportCsv();
+
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "authors.csv";
+    link.click();
+
+    URL.revokeObjectURL(url);
+  };
 
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const response = await userService.getAll({
+      const response = await authorService.getAll({
         page,
         limit: pageSize,
         search: debouncedSearch,
@@ -78,7 +102,7 @@ export function AuthorsPage() {
 
       setData(response);
     } catch (error) {
-      setError(error instanceof Error ? error.message : "Failed to load users");
+      setError(error instanceof Error ? error.message : "Failed to load Auth");
     } finally {
       setLoading(false);
     }
@@ -108,14 +132,42 @@ export function AuthorsPage() {
     [sortBy],
   );
 
-  const handleCreateOrUpdate = async () => {};
+  const handleCreateOrUpdate = async (values: CreateAuthorPayload) => {
+    try {
+      if (selectedAuthor) {
+        const payload: UpdateAuthorPayload = {
+          name: values.name,
+          bio: values.bio,
+          nationality: values.nationality,
+        };
+
+        await authorService.update(selectedAuthor.id, payload);
+      } else {
+        const payload: CreateAuthorPayload = {
+          name: values.name,
+          email: values.email,
+          bio: values.bio,
+          nationality: values.nationality,
+        };
+
+        await authorService.create(payload);
+      }
+
+      await fetchData(); // refresh list
+
+      setFormOpen(false);
+      setSelectedAuthor(null);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   const handleDelete = async () => {
     if (!selectedAuthor) return;
 
     setDeleting(true);
 
     try {
-      await userService.remove(selectedAuthor.id);
+      await authorService.remove(selectedAuthor.id);
       await fetchData();
 
       setDeleteOpen(false);
@@ -123,13 +175,14 @@ export function AuthorsPage() {
     } finally {
       setDeleting(false);
     }
-  };  return (
+  };
+  return (
     <Card>
       <CardHeader className="flex flex-row gap-4  justify-between">
         <CardTitle>Author</CardTitle>
 
         <div className="flex items-center gap-2 ml-auto">
-          {isReadOnly && (
+          {readOnly && (
             <>
               <input
                 ref={fileInputRef}
@@ -233,31 +286,34 @@ export function AuthorsPage() {
 
                     <TableBody>
                       {/*  need a correct  maping when api is ready */}
-                      {data.data.map((user) => (
-                        <TableRow key={user.id}>
-                          <TableCell>{user.name}</TableCell>
-                          <TableCell>{user.email}</TableCell>
-                          <TableCell className="max-w-md whitespace-normal wrap-break-words">
-                            {formatRole(user.role)}
+                      {data.data.map((author) => (
+                        <TableRow key={author.id}>
+                          <TableCell>{author.name}</TableCell>
+                          <TableCell>{author.nationality} </TableCell>
+                          <TableCell className="max-w-xs pl-0 pr-2 py-1 whitespace-normal wrap-break-words">
+                            {author.bio}
                           </TableCell>
+
                           <TableCell className="w-25">
                             <div className="flex items-center gap-2">
                               <Button variant="outline" size="sm" asChild>
-                                <Link to={`link for later api not ready`}>
+                                <Link
+                                  to={`/dashboard/authors/${author.id}/books`}
+                                >
                                   <BookOpen className="h-4 w-4" />
                                   View Books
                                 </Link>
                               </Button>
-                              {isReadOnly && ( //  need to negate isReadOnly
-                                <UserTableActions
+                              {!readOnly && (
+                                <TableActions
                                   onEdit={() => {
                                     // do edit
-                                    setSelectedAuthor(null); //set author later
+                                    setSelectedAuthor(author); //set author later
                                     setFormOpen(true);
                                   }}
                                   onDelete={() => {
                                     // do delete
-                                    setSelectedAuthor(null); //change user to author
+                                    setSelectedAuthor(author); //change user to author
                                     setDeleteOpen(true);
                                   }}
                                 />
@@ -282,7 +338,7 @@ export function AuthorsPage() {
           </>
         )}
       </CardContent>
-      {isReadOnly && ( // need to negate
+      {!readOnly && (
         <>
           <AuthorFormDialog
             open={formOpen}

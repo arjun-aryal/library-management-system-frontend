@@ -18,7 +18,9 @@ export function AppRoutes() {
       <Route path="/dashboard" element={<DashboardLayout />}>
         <Route path="users" element={<UsersPage />} />
         <Route path="authors" element={<AuthorsPage />} />
-        <Route path="books" element={<BooksPage />} />
+        {/* <Route path="books" element={<BooksPage />} /> */}
+
+        <Route path="authors/:authorId/books" element={<BooksPage />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/login" replace />} />

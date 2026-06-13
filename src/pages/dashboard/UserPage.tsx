@@ -30,7 +30,7 @@ import {
 import { SortableTableHead } from "../../components/common/SortableTableHead";
 import { Badge } from "../../components/ui/badge";
 import { formatRole } from "../../lib/roleutils";
-import { UserTableActions } from "../../components/user/userTableActions";
+import { TableActions } from "../../components/common/TableActions";
 import { DataPagination } from "../../components/common/Pagination";
 import { UserFormDialog } from "../../components/user/userDialog";
 import { ConfirmDialog } from "../../components/common/ConfirmDialog";
@@ -212,13 +212,13 @@ export function UsersPage() {
                         <TableRow key={user.id}>
                           <TableCell>{user.name}</TableCell>
                           <TableCell>{user.email}</TableCell>
-                          <TableCell>
+                          <TableCell className="max-w-xs pl-0 pr-2 py-1 whitespace-normal wrap-break-words">
                             <Badge variant="secondary">
                               {formatRole(user.role)}
                             </Badge>
                           </TableCell>
                           <TableCell className="w-[100px]">
-                            <UserTableActions
+                            <TableActions
                               onEdit={() => {
                                 // do edit
                                 setSelectedUser(user);
