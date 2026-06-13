@@ -182,7 +182,7 @@ export function AuthorsPage() {
         <CardTitle>Author</CardTitle>
 
         <div className="flex items-center gap-2 ml-auto">
-          {readOnly && (
+          {!readOnly && (
             <>
               <input
                 ref={fileInputRef}

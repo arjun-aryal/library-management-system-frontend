@@ -25,6 +25,6 @@ export const menuItems: MenuItem[] = [
     label: "Books",
     icon: BookOpen,
     path: "/dashboard/books",
-    roles: ["super_admin", "librarian","author"],
+    roles: ["author"],
   },
 ];

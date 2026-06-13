@@ -107,7 +107,6 @@ export function UserFormDialog({
                   <SelectContent>
                     <SelectItem value="super_admin">Super Admin</SelectItem>
                     <SelectItem value="librarian">Librarian</SelectItem>
-                    <SelectItem value="author">Author</SelectItem>
                   </SelectContent>
                 </Select>
               )}
