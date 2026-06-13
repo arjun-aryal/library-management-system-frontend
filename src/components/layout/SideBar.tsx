@@ -4,7 +4,7 @@ import { LogOut } from "lucide-react";
 import { menuItems } from "../../config/menuItems";
 import { useAuth } from "../../context/AuthContext";
 import { cn } from "../../lib/utils";
-import { formatRole } from "../../lib/roleutils";
+import { formatRole, getMenuPath } from "../../lib/roleutils";
 
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
@@ -57,14 +57,15 @@ export function Sidebar() {
       <nav className="flex-1 space-y-1 p-4">
         {visibleItems.map((item) => {
           const Icon = item.icon;
+          const menuPath = getMenuPath(item.label, item.path, user);
 
           return (
             <Link
               key={item.label}
-              to={item.path}
+              to={menuPath}
               className={cn(
                 "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                isActive(item.path)
+                isActive(menuPath)
                   ? "bg-primary text-primary-foreground"
                   : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
               )}

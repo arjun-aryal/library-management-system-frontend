@@ -6,24 +6,48 @@ import { DashboardLayout } from "../pages/dashboard/DashboardPage";
 import { AuthorsPage } from "../pages/dashboard/Authorpage";
 import { UsersPage } from "../pages/dashboard/UserPage";
 import { BooksPage } from "../pages/dashboard/BookPages";
+import { DashboardRedirect } from "../lib/dashboardRedirect";
+import { PublicRoute } from "./PublicRoutes";
+import { ProtectedRoute } from "./ProtectedRoutes";
+import { RoleGuard } from "./RoleGuard";
 
 export function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-
-      <Route path="/dashboard" element={<DashboardLayout />}>
-        <Route path="users" element={<UsersPage />} />
-        <Route path="authors" element={<AuthorsPage />} />
-        {/* <Route path="books" element={<BooksPage />} /> */}
-
-        <Route path="authors/:authorId/books" element={<BooksPage />} />
+      <Route element={<PublicRoute />}>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
       </Route>
 
-      <Route path="*" element={<Navigate to="/login" replace />} />
+      <Route element={<ProtectedRoute />}>
+        <Route path="/dashboard" element={<DashboardLayout />}>
+          <Route index element={<DashboardRedirect />} />
+
+          <Route element={<RoleGuard allowedRoles={["super_admin"]} />}>
+            <Route path="users" element={<UsersPage />} />
+          </Route>
+
+          <Route
+            element={<RoleGuard allowedRoles={["super_admin", "librarian"]} />}
+          >
+            <Route path="authors" element={<AuthorsPage />} />
+          </Route>
+
+          <Route
+            element={
+              <RoleGuard
+                allowedRoles={["super_admin", "librarian", "author"]}
+              />
+            }
+          >
+            <Route path="authors/:authorId/books" element={<BooksPage />} />
+          </Route>
+        </Route>
+      </Route>
+
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   );
 }

@@ -11,6 +11,7 @@ export interface User extends BaseUser {
   is_active: boolean;
   created_at: string;
   updated_at: string;
+  authorId: number;
 }
 
 export interface CreateUserPayload extends BaseUser {

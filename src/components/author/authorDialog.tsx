@@ -10,7 +10,7 @@ import {
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
-import { authorValidation } from "../../lib/validation";
+import { authorValidation, loginValidation } from "../../lib/validation";
 
 import { Button } from "../ui/button";
 import type { Author, CreateAuthorPayload } from "../../types/author.types";
@@ -102,13 +102,7 @@ export function AuthorFormDialog({
                 id="email"
                 type="email"
                 placeholder="Enter email"
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: {
-                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: "Invalid email address",
-                  },
-                })}
+                {...register("email", loginValidation.email)}
               />
 
               {errors.email && (

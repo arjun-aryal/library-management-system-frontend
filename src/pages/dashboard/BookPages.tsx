@@ -130,7 +130,7 @@ export function BooksPage() {
     setDeleting(true);
 
     try {
-      await authorService.remove(selectedBook.id);
+      await bookService.remove(Number(authorId), selectedBook.id);
       await fetchData();
 
       setDeleteOpen(false);
@@ -254,7 +254,7 @@ export function BooksPage() {
                         </TableCell>
 
                         <TableCell className="w-[20%] text-right">
-                          {!readOnly && (
+                          {canManage && (
                             <TableActions
                               onEdit={() => {
                                 setSelectedBook(book);
