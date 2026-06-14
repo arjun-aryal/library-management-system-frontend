@@ -278,9 +278,7 @@ export function AuthorsPage() {
                           className="w-auto"
                         />
                         <TableHead>Bio</TableHead>
-                        <TableHead className=" text-right pr-0">
-                          Actions
-                        </TableHead>
+                        <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
 
