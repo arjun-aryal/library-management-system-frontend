@@ -56,3 +56,4 @@ pnpm build    # Build for production
 pnpm preview  # Preview production build
 pnpm lint     # Run ESLint
 ```
+> Note: Newly created users and authors use the default password configured in the backend. Use the backend's DEFAULT_PASSWORD value when logging in for the first time.
